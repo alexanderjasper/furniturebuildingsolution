@@ -71,7 +71,7 @@ namespace FurnitureBuildingSolution.Services
             var from = new MailboxAddress("Shelfer", "no-reply@shelfer.dk");
             message.From.Add(from);
 
-            var to = new MailboxAddress(email.Receiver);
+            var to = new MailboxAddress(email.Receiver, email.Receiver);
             message.To.Add(to);
 
             message.Subject = email.Subject;

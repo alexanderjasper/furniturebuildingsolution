@@ -49,7 +49,7 @@ namespace FurnitureBuildingSolution
             services.AddScoped<IRazorLightEngine>(sp =>
             {
                 var engine = new RazorLightEngineBuilder()
-                .UseFilesystemProject(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location))
+                .UseFileSystemProject(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location))
                 .UseMemoryCachingProvider()
                 .Build();
                 return engine;
@@ -114,7 +114,7 @@ namespace FurnitureBuildingSolution
                 };
             });
 
-            if (_currentEnvironment.IsProduction())
+            if (_currentEnvironment.EnvironmentName == "Production")
             {
                 services.AddHttpsRedirection(options =>
                 {
@@ -126,7 +126,7 @@ namespace FurnitureBuildingSolution
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.EnvironmentName == "Development")
             {
                 app.UseDeveloperExceptionPage();
             }
