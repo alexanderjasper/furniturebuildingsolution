@@ -1,13 +1,6 @@
-# ASP.NET Core & Vue.js Starter
+# Furniture Building Solution
 
-### Made with :heart: by [Trilon.io](https://trilon.io)
-<p>
-  <a href="https://trilon.io" target="_blank">
-        <img width="200" height="auto" src="https://trilon.io/meta/og-image.png" alt="Trilon.io - Angular Universal, NestJS, JavaScript Application Consulting Development and Training">
-  </a>
-</p>
-
-_Looking for ASP.NET Core & Angular 7.x+ Universal starter? [click here](https://github.com/TrilonIO/aspnetcore-angular-universal)_
+ASP.NET Core & Vue.js Application for custom furniture design and ordering.
 
 ---
 
@@ -17,45 +10,258 @@ _Looking for ASP.NET Core & Angular 7.x+ Universal starter? [click here](https:/
 * [Prerequisites](#prerequisites)
 * [Installation](#installation)
 * [Getting Started](#getting-started)
-* [Extras](#extras)
+* [Development](#development)
+* [Troubleshooting](#troubleshooting)
 * [License](#license)
-* [Trilon - VueJS & Asp.NET Consulting & Training](#trilon---vue-aspnet-nodejs---consulting--training--development)
 
 # Features
 
-- **ASP.NET Core 2.1**
+- **ASP.NET Core 9.0**
   - Web API
+  - JWT Authentication
+  - Entity Framework Core
+  - Serilog Logging
 - **VueJS 2**
   - Vuex (State Store)
-- **Webpack**
-  - HMR (Hot Module Replacement/Reloading)
-- **Bootstrap 4**
+  - Vue Router
+  - Three.js for 3D visualization
+- **Webpack 4**
+  - Development and Production builds
+  - Hot Module Replacement (HMR)
+- **Bootstrap 4 & Bootstrap Vue**
 
-# Prerequisites:
- * [.Net Core 2.1](https://www.microsoft.com/net/download/windows)
- * [NodeJS](https://nodejs.org/) >= 8.9.4
- * [VSCode](https://code.visualstudio.com/) (ideally), or VS2017
+# Prerequisites
 
-# Installation:
- * Install the template from nuget: `dotnet new -i aspnetcore-vuejs`
+ * [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+ * [Node.js](https://nodejs.org/) >= 14.x (LTS recommended)
+ * [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (LocalDB, Express, or full version)
+ * IDE: [Visual Studio 2022](https://visualstudio.microsoft.com/), [Rider](https://www.jetbrains.com/rider/), or [VSCode](https://code.visualstudio.com/)
 
-# Getting Started:
- * Create folder from template: `dotnet new vuejs` ([Official documentation](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new?tabs=netcore2x))
-   * This will automatically run `dotnet restore` unless you install with `dotnet new vuejs --skipRestore`
- * Restore Node dependencies by running `npm install`
+# Installation
 
-## Start the application:
-You have two choices when it come at how your preffer to run it. You can either use the command line or the build-in run command.
+## 1. Clone the Repository
 
-### 1. Using the command line
-Run the application using `dotnet run` or `npm run dev`
-- note `dotnet run` should be run in `Development` environment for hot reloading. This setting can be set either within the command line or via the `launchSettings.json` available in the `Properties` folder.
+```bash
+git clone <repository-url>
+cd furniturebuildingsolution
+```
 
-### 2. Using the built-in run command
-Run the application in VSCode or Visual Studio 2017 by hitting `F5`.
+## 2. Restore .NET Dependencies
 
-## View your application running
-Browse to [http://localhost:5000](http://localhost:5000)
+```bash
+cd content
+dotnet restore
+```
+
+## 3. Install Node.js Dependencies
+
+```bash
+npm install
+```
+
+## 4. Configure Database
+
+Update the connection string in `content/appsettings.json` to point to your SQL Server instance:
+
+```json
+{
+  "DatabaseSettings": {
+    "Server": "localhost",
+    "Database": "FurnitureBuildingDB",
+    "UserId": "your_user",
+    "Password": "your_password"
+  }
+}
+```
+
+For development with SQL Server LocalDB, you can use:
+```
+Server=(localdb)\\mssqllocaldb;Database=FurnitureBuildingDB;Trusted_Connection=True;
+```
+
+## 5. Run Database Migrations
+
+```bash
+cd content
+dotnet ef database update
+```
+
+# Getting Started
+
+## Build Frontend Assets
+
+Before running the application for the first time, you need to build the frontend assets:
+
+### Development Build
+
+```bash
+cd content
+npm run build-vendor:dev
+npx webpack
+```
+
+### Production Build
+
+```bash
+cd content
+npm run build
+```
+
+## Start the Application
+
+### Option 1: Using the Command Line
+
+```bash
+cd content
+dotnet run
+```
+
+The application will start on `http://localhost:5001`
+
+### Option 2: Using IDE
+
+**Visual Studio / Rider:**
+- Open `FurnitureBuildingSolution.sln`
+- Press `F5` to start debugging
+
+**VSCode:**
+- Open the `content` folder
+- Press `F5` to start debugging (uses `launchSettings.json`)
+
+## View Your Application
+
+Browse to [http://localhost:5001](http://localhost:5001)
+
+**Note:** The application runs on HTTP port 5001 in development mode. HTTPS redirection is disabled in development.
+
+# Development
+
+## Frontend Development
+
+The frontend uses Webpack for bundling. During development:
+
+1. **Watch Mode** (for continuous rebuilds):
+   ```bash
+   npx webpack --watch
+   ```
+
+2. **Development Server** (with HMR - if configured):
+   ```bash
+   npm run dev
+   ```
+
+## Project Structure
+
+```
+content/
+├── ClientApp/           # Vue.js frontend application
+│   ├── components/      # Vue components
+│   ├── _services/       # API service layer
+│   ├── router/          # Vue Router configuration
+│   └── store/           # Vuex state management
+├── Controllers/         # ASP.NET Core API controllers
+├── Services/            # Business logic layer
+├── Repositories/        # Data access layer
+├── Database/            # EF Core DbContext
+├── wwwroot/            # Static files and built assets
+│   └── dist/           # Webpack output
+├── Properties/         # Launch settings
+└── Views/              # Razor views
+
+```
+
+## Environment Configuration
+
+The application uses `ASPNETCORE_ENVIRONMENT` to determine the environment:
+
+- **Development**: `ASPNETCORE_ENVIRONMENT=Development`
+  - HTTP only (no HTTPS redirection)
+  - Detailed error pages
+  - API URL: `http://localhost:5001`
+
+- **Production**: `ASPNETCORE_ENVIRONMENT=Production`
+  - HTTPS redirection enabled
+  - Production error handling
+  - API URL configured in webpack
+
+Set the environment variable in:
+- `Properties/launchSettings.json` (for IDE debugging)
+- Command line: `export ASPNETCORE_ENVIRONMENT=Development` (Mac/Linux) or `set ASPNETCORE_ENVIRONMENT=Development` (Windows)
+
+## Database Migrations
+
+To create a new migration:
+
+```bash
+cd content
+dotnet ef migrations add MigrationName
+dotnet ef database update
+```
+
+# Troubleshooting
+
+## Port Already in Use
+
+If you get "address already in use" error:
+
+```bash
+# Find process using port 5001
+lsof -i :5001
+
+# Kill the process
+kill -9 <PID>
+```
+
+## Frontend Assets Not Loading (404 errors)
+
+If you see 404 errors for `main.js`, `vendor.css`, etc.:
+
+1. Build the frontend assets:
+   ```bash
+   cd content
+   npm run build-vendor:dev
+   npx webpack
+   ```
+
+2. Hard refresh your browser: `Cmd+Shift+R` (Mac) or `Ctrl+Shift+R` (Windows)
+
+## API Calls Failing
+
+If the frontend can't reach the API:
+
+1. Verify the application is running on `http://localhost:5001`
+2. Check the API URL in the browser console
+3. Rebuild frontend with correct environment:
+   ```bash
+   # For development (uses localhost)
+   npx webpack
+   
+   # For production
+   npm run build:prod
+   ```
+
+## Database Connection Issues
+
+1. Verify SQL Server is running
+2. Check connection string in `appsettings.json`
+3. Ensure database exists: `dotnet ef database update`
+
+## Styling Not Appearing
+
+If the page loads but has no styling:
+
+1. Ensure `site.css` is built:
+   ```bash
+   npm run build-vendor:dev
+   ```
+2. Hard refresh browser to clear cache
+3. Check browser console for CSS loading errors
+
+# Recommended Tools
+
+- **Vue.js DevTools**: [Chrome Extension](https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
+- **SQL Server Management Studio** (SSMS) for database management
+- **.NET CLI**: Included with .NET SDK for command-line operations
 
 # Recommended plugin for debugging VueJS
 
