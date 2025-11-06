@@ -1,17 +1,19 @@
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using FurnitureBuildingSolution;
+using Serilog;
 
-namespace FurnitureBuildingSolution
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateWebHostBuilder(args).Build().Run();
-        }
+var builder = WebApplication.CreateBuilder(args);
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-           WebHost.CreateDefaultBuilder(args)
-               .UseStartup<Startup>().UseUrls("http://localhost:5001");
-    }
-}
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File("Logs/shelfer-.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+var startup = new Startup(builder.Environment);
+startup.ConfigureServices(builder.Services);
+
+var app = builder.Build();
+
+startup.Configure(app, builder.Environment);
+
+app.Run();
