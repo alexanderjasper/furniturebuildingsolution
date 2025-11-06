@@ -1,6 +1,7 @@
 using AutoMapper;
 using FurnitureBuildingSolution.Blueprint;
 using FurnitureBuildingSolution.Database;
+using FurnitureBuildingSolution.Dtos.Bookcase;
 using FurnitureBuildingSolution.Entities;
 using FurnitureBuildingSolution.Helpers;
 using FurnitureBuildingSolution.Repositories;
@@ -113,10 +114,18 @@ namespace FurnitureBuildingUnitTests
 
         private BlueprintBookcase GetStandardBlueprint()
         {
-            var bookcase = new Bookcase()
+            var material = new Material
+            {
+                Id = 1,
+                Name = "Test Material",
+                Thickness = 18,
+                PricePerSquareMeter = 100
+            };
+            var bookcase = new Bookcase(material)
             {
                 Id = 0,
                 Name = "Test",
+                PlateDepth = 300
             };
             bookcase.Corners = new List<Corner>(){
                 new Corner(-200, -200, 0),
@@ -148,91 +157,106 @@ namespace FurnitureBuildingUnitTests
                 new Plate(bookcase) {
                     Start = bookcase.Corners[0],
                     End = bookcase.Corners[2],
-                    InnerPlate = false,
+                    InnerPlateStart = false,
+                    InnerPlateEnd = false,
                     Id = 0
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[3],
                     End = bookcase.Corners[6],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 1
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[7],
                     End = bookcase.Corners[8],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 2
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[8],
                     End = bookcase.Corners[9],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 3
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[10],
                     End = bookcase.Corners[11],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 4
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[11],
                     End = bookcase.Corners[13],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 5
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[14],
                     End = bookcase.Corners[15],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 6
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[16],
                     End = bookcase.Corners[17],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 7
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[18],
                     End = bookcase.Corners[22],
-                    InnerPlate = false,
+                    InnerPlateStart = false,
+                    InnerPlateEnd = false,
                     Id = 8
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[0],
                     End = bookcase.Corners[18],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 9
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[1],
                     End = bookcase.Corners[4],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 10
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[4],
                     End = bookcase.Corners[19],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 11
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[12],
                     End = bookcase.Corners[20],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 12
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[5],
                     End = bookcase.Corners[21],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 13
                 },
                 new Plate(bookcase) {
                     Start = bookcase.Corners[2],
                     End = bookcase.Corners[22],
-                    InnerPlate = true,
+                    InnerPlateStart = true,
+                    InnerPlateEnd = true,
                     Id = 14
                 }
             };
@@ -332,9 +356,19 @@ namespace FurnitureBuildingUnitTests
             var configuration = new MapperConfiguration(cfg => cfg.AddProfile(mapperProfile));
             var mapper = new Mapper(configuration);
 
-            var bookcaseService = new BookcaseService(new Mock<BookcaseRepository>(new Mock<DataContext>(new DbContextOptions<DataContext>()).Object, new BookcaseMapper(mapper)).Object, new BookcaseMapper(mapper), mapper);
+            var mockEmailService = new Mock<IEmailService>();
+            var bookcaseService = new BookcaseService(new Mock<BookcaseRepository>(new Mock<DataContext>(new DbContextOptions<DataContext>()).Object, new BookcaseMapper(mapper)).Object, new BookcaseMapper(mapper), mapper, mockEmailService.Object);
 
-            return bookcaseService.GetBlueprint(bookcase);
+            var blueprintRequest = new BlueprintRequestDto
+            {
+                Id = bookcase.Id,
+                PlateThickness = bookcase.PlateThickness,
+                DoorPlateThickness = bookcase.DoorPlateThickness,
+                IncludeSingleSided = true,
+                IncludeDoubleSided = true
+            };
+
+            return bookcaseService.GetBlueprint(blueprintRequest);
         }
     }
 }
