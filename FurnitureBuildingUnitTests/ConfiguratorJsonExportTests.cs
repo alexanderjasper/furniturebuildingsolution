@@ -123,9 +123,10 @@ namespace FurnitureBuildingUnitTests
             };
             var bookcase = new Bookcase(material)
             {
-                Id = 0,
+                Id = 1,
                 Name = "Test",
-                PlateDepth = 300
+                PlateDepth = 300,
+                DoorPlateThickness = 18
             };
             bookcase.Corners = new List<Corner>(){
                 new Corner(-200, -200, 0),
@@ -357,7 +358,11 @@ namespace FurnitureBuildingUnitTests
             var mapper = new Mapper(configuration);
 
             var mockEmailService = new Mock<IEmailService>();
-            var bookcaseService = new BookcaseService(new Mock<BookcaseRepository>(new Mock<DataContext>(new DbContextOptions<DataContext>()).Object, new BookcaseMapper(mapper)).Object, new BookcaseMapper(mapper), mapper, mockEmailService.Object);
+            var mockRepository = new Mock<IBookcaseRepository>();
+            mockRepository.Setup(r => r.GetForSpecifications(It.IsAny<int>(), It.IsAny<double?>(), It.IsAny<double?>()))
+                .Returns(bookcase);
+            
+            var bookcaseService = new BookcaseService(mockRepository.Object, new BookcaseMapper(mapper), mapper, mockEmailService.Object);
 
             var blueprintRequest = new BlueprintRequestDto
             {
