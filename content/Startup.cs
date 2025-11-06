@@ -4,8 +4,6 @@ using FurnitureBuildingSolution.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +16,6 @@ using System;
 using RazorLight;
 using System.IO;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
 
@@ -26,9 +23,9 @@ namespace FurnitureBuildingSolution
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _currentEnvironment;
+        private readonly IWebHostEnvironment _currentEnvironment;
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             Configuration = AppSettings.GetConfiguration(env.ContentRootPath, env.EnvironmentName);
             _currentEnvironment = env;
@@ -46,9 +43,8 @@ namespace FurnitureBuildingSolution
             }
 
             services.AddCors();
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddAutoMapper();
+            services.AddControllersWithViews();
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddScoped<IRazorLightEngine>(sp =>
             {
@@ -128,28 +124,17 @@ namespace FurnitureBuildingSolution
             }
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-
-                // Webpack initialization with hot-reload.
-                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-                {
-                    HotModuleReplacement = true,
-                });
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            loggerFactory.AddFile("Logs/shelfer-{Date}.log");
 
             var options = new RewriteOptions()
                 .AddRedirect("^bookcase-designer$", "reoldesigner", 301)
@@ -170,23 +155,23 @@ namespace FurnitureBuildingSolution
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            // global cors policy
+            app.UseRouting();
+
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
+                endpoints.MapFallbackToController("Index", "Home");
             });
         }
     }
