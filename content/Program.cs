@@ -1,5 +1,6 @@
 using FurnitureBuildingSolution;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,11 +11,13 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
+builder.WebHost.UseUrls("http://localhost:5001");
+
 var startup = new Startup(builder.Environment);
 startup.ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
-startup.Configure(app, builder.Environment);
+startup.Configure(app, app.Environment);
 
 app.Run();
