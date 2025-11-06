@@ -120,7 +120,12 @@ namespace FurnitureBuildingSolution.Services
             var templatePath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), $"Views\\Emails\\OrderConfirmation.cshtml");
             string razorTemplate = System.IO.File.ReadAllText(templatePath);
             var orderDto = _autoMapper.Map<OrderDto>(addedOrder);
-            return await _razorEngine.CompileRenderAsync("orderConfirmation", razorTemplate, orderDto);
+            var model = new System.Dynamic.ExpandoObject();
+            var modelDict = (IDictionary<string, object>)model;
+            modelDict["OrderNumber"] = orderDto.OrderNumber;
+            modelDict["OrderItems"] = orderDto.OrderItems;
+            modelDict["Address"] = orderDto.Address;
+            return await _razorEngine.CompileRenderAsync("orderConfirmation", razorTemplate, model);
         }
 
         private void LockBookcases(OrderDto orderDto, int userId)

@@ -1,4 +1,5 @@
 using FurnitureBuildingSolution;
+using Microsoft.AspNetCore.Builder;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);

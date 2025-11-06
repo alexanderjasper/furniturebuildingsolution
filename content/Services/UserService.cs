@@ -154,7 +154,10 @@ namespace FurnitureBuildingSolution.Services
             string razorTemplate = System.IO.File.ReadAllText(templatePath);
             var recoveryLink = _appSettings.RootUrl + "/password-change/" + passwordRecoveryKey;
             var passwordChangeEmailViewModel = new PasswordChangeEmailViewModel() { RecoveryLink = recoveryLink };
-            return await _razorEngine.CompileRenderAsync("passwordChange", razorTemplate, passwordChangeEmailViewModel);
+            var model = new System.Dynamic.ExpandoObject();
+            var modelDict = (IDictionary<string, object>)model;
+            modelDict["RecoveryLink"] = recoveryLink;
+            return await _razorEngine.CompileRenderAsync("passwordChange", razorTemplate, model);
         }
 
         public void Delete(int id)
