@@ -1,4 +1,3 @@
-using AutoMapper;
 using FurnitureBuildingSolution.Helpers;
 using FurnitureBuildingSolution.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
