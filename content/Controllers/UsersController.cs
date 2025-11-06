@@ -94,7 +94,7 @@ namespace FurnitureBuildingSolution.Controllers
             {
                 if (!_userService.UserExists(userDto.EmailAddress))
                 {
-                    // save 
+                    // save
                     _userService.Create(userDto);
                     return Ok();
                 }
