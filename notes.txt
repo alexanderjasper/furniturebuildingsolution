@@ -1,0 +1,2 @@
+To get migration SQL script, e.g.:
+dotnet ef migrations script CreateDatabaseSchema AddedUserReferenceToBookcase -o ./UpdateScript.sql
