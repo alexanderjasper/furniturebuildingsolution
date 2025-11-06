@@ -12,10 +12,7 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-if (builder.Environment.IsDevelopment())
-{
-    builder.WebHost.UseUrls("http://localhost:5001");
-}
+builder.WebHost.UseUrls("http://localhost:5001");
 
 var startup = new Startup(builder.Environment);
 startup.ConfigureServices(builder.Services);

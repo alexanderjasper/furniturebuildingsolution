@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -135,23 +136,29 @@ namespace FurnitureBuildingSolution
                 app.UseHsts();
             }
 
-            var options = new RewriteOptions()
-                .AddRedirect("^bookcase-designer$", "reoldesigner", 301)
-                .AddRedirect("^shopping-cart$", "indkoebskurv", 301)
-                .AddRedirect("^specifications$", "specifikationer", 301)
-                .AddRedirect("^my-bookcases$", "mine-reoler", 301)
-                .AddRedirect("^orders$", "ordrer", 301)
-                .AddRedirect("^contact-us$", "kontakt-os", 301)
-                .AddRedirect("^about-us$", "om-os", 301)
-                .AddRedirect("^login$", "log-ind", 301)
-                .AddRedirect("^register$", "opret-konto", 301)
-                .AddRedirect("^order-placed$", "ordre-bekraeftet", 301)
-                .AddRedirect("^order-confirmation/(.*)$", "ordrebekraeftelse/$1", 301)
-                .AddRedirect("^forgot-password$", "glemt-adgangskode", 301)
-                .AddRedirect("^password-change/(.*)$", "skift-adgangskode/$1", 301);
-            app.UseRewriter(options);
+            if (!env.IsDevelopment())
+            {
+                var options = new RewriteOptions()
+                    .AddRedirect("^bookcase-designer$", "reoldesigner", 301)
+                    .AddRedirect("^shopping-cart$", "indkoebskurv", 301)
+                    .AddRedirect("^specifications$", "specifikationer", 301)
+                    .AddRedirect("^my-bookcases$", "mine-reoler", 301)
+                    .AddRedirect("^orders$", "ordrer", 301)
+                    .AddRedirect("^contact-us$", "kontakt-os", 301)
+                    .AddRedirect("^about-us$", "om-os", 301)
+                    .AddRedirect("^login$", "log-ind", 301)
+                    .AddRedirect("^register$", "opret-konto", 301)
+                    .AddRedirect("^order-placed$", "ordre-bekraeftet", 301)
+                    .AddRedirect("^order-confirmation/(.*)$", "ordrebekraeftelse/$1", 301)
+                    .AddRedirect("^forgot-password$", "glemt-adgangskode", 301)
+                    .AddRedirect("^password-change/(.*)$", "skift-adgangskode/$1", 301);
+                app.UseRewriter(options);
+            }
 
-            app.UseHttpsRedirection();
+            if (!env.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
             app.UseStaticFiles();
 
             app.UseRouting();
