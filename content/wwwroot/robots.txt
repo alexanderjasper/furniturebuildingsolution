@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /reoldesigner/doeraabning
+Disallow: /reoldesigner/simpelt
+Disallow: /cookiepolitik
+Disallow: /handelsbetingelser-og-persondatapolitik

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="da">
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400' rel='stylesheet' type='text/css'>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="~/dist/vendor.css" asp-append-version="true" />
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="~/dist/site.css" asp-append-version="true" />
+    </environment>
+    <script src="https://apps.elfsight.com/p/platform.js" defer></script>
+    <script id="mcjs">!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/6a53ff31002a21933ded758c0/f2d44029d1ea8b8dc2d1ce885.js");</script>
+<!-- Load Facebook SDK for JavaScript -->
+      <div id="fb-root"></div>
+      <script>
+        window.fbAsyncInit = function() {
+          FB.init({
+            xfbml            : true,
+            version          : 'v6.0'
+          });
+        };
+
+        (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/da_DK/sdk/xfbml.customerchat.js';
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));</script>
+
+      <!-- Your customer chat code -->
+      <div class="fb-customerchat"
+        attribution=setup_tool
+        page_id="723653364703400"
+        theme_color="#2dac86"
+        logged_in_greeting="Hej! Du kan skrive til os fra Shelfer her, hvis du har spørgsmål!"
+        logged_out_greeting="Hej! Du kan skrive til os fra Shelfer her, hvis du har spørgsmål!">
+      </div>
+</head>
+
+<body>
+    @RenderBody()
+
+    <script src="~/dist/vendor.js" asp-append-version="true"></script>
+    @RenderSection("scripts", required: false)
+
+</body>
+
+</html>
